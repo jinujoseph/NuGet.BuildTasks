@@ -304,7 +304,14 @@ Copyright (c) .NET Foundation. All rights reserved.
       <Output TaskParameter="ReferenceAssemblyPaths" ItemName="_NuGetInjectionSourceDirectories" />
     </GetReferenceAssemblyPaths>
 
+    <PropertyGroup Condition="'$(MSBuildProjectFile)'=='GlobalDTARSettings.proj' AND '$(TargetFrameworkIdentifier)' == 'NETCore'">
+    <VersionedFrameworkInjectionLockFile>@(_NuGetInjectionSourceDirectories->'%(Identity)$(VisualStudioVersion)\project.lock.json')</VersionedFrameworkInjectionLockFile>
+    <ProjectLockJson Condition="Exists('$(VersionedFrameworkInjectionLockFile)')">'$(VersionedFrameworkInjectionLockFile)'</ProjectLockJson>
+    </PropertyGroup>
+
     <PropertyGroup>
+      <VersionedFrameworkInjectionLockFile>@(_NuGetInjectionSourceDirectories->'%(Identity)$(VisualStudioVersion)\project.lock.json')</VersionedFrameworkInjectionLockFile>
+      <FrameworkInjectionLockFile Condition="Exists('$(VersionedFrameworkInjectionLockFile)')">$(VersionedFrameworkInjectionLockFile)</FrameworkInjectionLockFile>
       <FrameworkInjectionLockFile Condition="'$(FrameworkInjectionLockFile)' == ''">@(_NuGetInjectionSourceDirectories->'%(Identity)\project.lock.json')</FrameworkInjectionLockFile>
       <FrameworkInjectionPackagesDirectory Condition="'$(FrameworkInjectionPackagesDirectory)' == ''">$([MSBuild]::GetRegistryValueFromView('HKEY_LOCAL_MACHINE\SOFTWARE\NuGet\Repository', 'NETCoreSDK', null, RegistryView.Registry32, RegistryView.Default))</FrameworkInjectionPackagesDirectory>
     </PropertyGroup>
